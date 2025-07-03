@@ -4,11 +4,20 @@ import numpy as np
 import tensorflow as tf
 import joblib
 
-# Load saved model and preprocessing tools
-model = tf.keras.models.load_model("sleep_model.h5")
-scaler = joblib.load("scaler.pkl")
-le = joblib.load("label_encoder.pkl")
-columns_template = pd.read_csv("X_train_columns.csv").columns.tolist()
+# Load saved model and preprocessing tools with error handling
+try:
+    model = tf.keras.models.load_model("sleep_model.h5")
+except Exception as e:
+    st.error(f"❌ Failed to load model: {e}")
+    st.stop()
+
+try:
+    scaler = joblib.load("scaler.pkl")
+    le = joblib.load("label_encoder.pkl")
+    columns_template = pd.read_csv("X_train_columns.csv").columns.tolist()
+except Exception as e:
+    st.error(f"❌ Error loading preprocessing files: {e}")
+    st.stop()
 
 # --- Wellness Score Function ---
 def calculate_wellness_score(sleep, quality, activity, stress):
